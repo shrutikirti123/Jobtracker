@@ -2,7 +2,12 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+venv/
+__pycache__/
+*.pyc
+.env
+alembic/versions/__pycache__
+resumes/
 # C extensions
 *.so
 
