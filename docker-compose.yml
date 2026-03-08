@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  api:
+    build: .
+    container_name: jobtracker_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      DATABASE_URL: postgresql://postgres:Shruti123@db:5432/jobtracker
+      REDIS_URL: redis://redis:6379/0
+
+  db:
+    image: postgres:15
+    container_name: jobtracker_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Shruti123
+      POSTGRES_DB: jobtracker
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: jobtracker_redis
+    ports:
+      - "6379:6379"
