@@ -11,3 +11,5 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String)
     skills = Column(String)
+
+    jobs = relationship("Job", back_populates="user")

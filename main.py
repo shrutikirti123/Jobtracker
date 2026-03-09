@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Depends, HTTPException
+import traceback
 from slowapi.util import get_remote_address
 from database import Base, engine
 import os
@@ -22,6 +23,23 @@ def rate_limit_handler(request, exc):
         status_code=429,
         content={"detail": "Rate limit exceeded"}
     )
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+
+    return JSONResponse(
+        status_code=500,
+        content={
+            "message": "Internal server error",
+            "detail": str(exc)
+        }
+    )
+@app.get("/health")
+def health():
+
+    return {
+        "status": "ok",
+        "service": "jobtracker-api"
+    }
 
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
 app.include_router(job_routes.router, prefix="/jobs", tags=["Jobs"])

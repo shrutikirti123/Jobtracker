@@ -17,3 +17,10 @@ celery.conf.update(
     timezone="UTC",
     enable_utc=True,
 )
+
+celery.conf.beat_schedule = {
+    "discover-jobs-every-6-hours": {
+        "task": "tasks.job_tasks.discover_jobs_for_all_users",
+        "schedule": 21600,
+    }
+}

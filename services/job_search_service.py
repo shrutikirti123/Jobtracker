@@ -1,33 +1,33 @@
+import json
+from core.redis_client import redis_client
 import requests
-import redis
-import os
-
-REMOTIVE_API = "https://remotive.com/api/remote-jobs"
 
 
-def search_jobs(keyword: str):
+def search_jobs(keyword):
 
-    response = requests.get(REMOTIVE_API)
+    cache_key = f"jobs:{keyword}"
 
-    data = response.json()
+    cached = redis_client.get(cache_key)
 
-    jobs = []
+    if cached:
+        return json.loads(cached)
 
-    for job in data["jobs"]:
+    url = f"https://remotive.com/api/remote-jobs?search={keyword}"
 
-        if keyword.lower() in job["title"].lower():
+    response = requests.get(url)
+    data = response.json()["jobs"]
 
-            jobs.append({
-                "title": job["title"],
-                "company": job["company_name"],
-                "description": job["description"],
-                "url": job["url"]
-            })
+    results = []
 
-    return jobs[:10]
+    for job in data[:20]:
 
+        results.append({
+            "title": job["title"],
+            "company": job["company_name"],
+            "description": job["description"],
+            "url": job["url"]
+        })
 
+    redis_client.setex(cache_key, 3600, json.dumps(results))
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-
-redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+    return results

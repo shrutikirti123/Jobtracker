@@ -165,7 +165,7 @@ def discover_background(
 
     resume_path = f"resumes/{current_user.id}_{current_user.name}_resume.pdf"
 
-    task = discover_jobs_task.delay(resume_path, keyword)
+    task = discover_jobs_task.delay(resume_path, keyword, current_user.id)
 
     return {"task_id": task.id}
 
