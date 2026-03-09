@@ -6,9 +6,14 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 celery = Celery(
     "jobtracker",
     broker=REDIS_URL,
-    backend=REDIS_URL
+    backend=REDIS_URL,
+    include=["tasks.job_tasks"]
 )
 
-celery.conf.task_routes = {
-    "tasks.*": {"queue": "default"}
-}
+celery.conf.update(
+    task_serializer="json",
+    accept_content=["json"],
+    result_serializer="json",
+    timezone="UTC",
+    enable_utc=True,
+)

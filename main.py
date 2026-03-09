@@ -8,6 +8,7 @@ from slowapi.util import get_remote_address
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi.errors import RateLimitExceeded
 from fastapi.responses import JSONResponse
+from routes import analytics_routes
 
 app = FastAPI()
 
@@ -25,3 +26,4 @@ def rate_limit_handler(request, exc):
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
 app.include_router(job_routes.router, prefix="/jobs", tags=["Jobs"])
 app.include_router(resume_routes.router, prefix="/resume", tags=["Resume"])
+app.include_router(analytics_routes.router, prefix="/analytics", tags=["Analytics"])
